@@ -26,17 +26,11 @@ Generates 367 user-specific YAML files using the template.
 
 Output Folder: schedules/
 Contains all generated YAML files like:
-
-python-repl
-Copy
-Edit
 schedules/Aman-devspaces.yaml
 schedules/Abhishek-devspaces.yaml
-...
+
+
 🛠️ Usage
-bash
-Copy
-Edit
 chmod +x generate_user_schedules.sh
 ./generate_user_schedules.sh
 All generated files will be available inside the schedules/ directory.
@@ -48,9 +42,7 @@ Backup Window: Friday 11 PM CT → Monday 4 AM CT
 Cron Format Used: 0 <hour> * * <day_of_week>
 
 📌 Example Generated YAML
-yaml
-Copy
-Edit
+
 apiVersion: velero.io/v1
 kind: Schedule
 metadata:
