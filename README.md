@@ -1,43 +1,53 @@
-# velero-user-backup-scheduler
 📦 Velero User Backup Scheduler
-This project automates the creation of scheduled Velero backup YAML files for multiple user namespaces in a Kubernetes (OpenShift) cluster using OADP (OpenShift API for Data Protection).
+This project automates the creation of scheduled Velero backup configurations for multiple users in a Kubernetes cluster, specifically using OpenShift’s Data Protection (OADP) integration.
 
-✅ Goal
-Distribute backups for 367 users over a defined maintenance window:
-Friday 11 PM CT to Monday 4 AM CT (total 53 hours).
-Each user namespace follows the naming format: <username>-devspaces.
+🎯 Objective
+To distribute the backup of 367 user-specific namespaces (<username>-devspaces) evenly over a fixed maintenance window — from Friday 11 PM CT to Monday 4 AM CT — using Velero's Schedule kind YAML definitions.
 
-🧩 How It Works
-users.txt — Contains the list of user names.
+📂 Key Components
+users.txt
+A text file containing a list of 367 user names (randomly generated or customized).
 
-devspaces.yaml — A template Velero Schedule YAML with placeholders.
+devspaces.yaml (Template)
+A base Velero schedule template with placeholders:
 
-generate_user_schedules.sh — A script that:
+<variable> → replaced with the username.
 
-Calculates how many users to schedule per hour.
+<will-be-replaced> → replaced with calculated cron schedule time.
 
-Generates personalized YAML files for each user with unique cron schedules.
+generate_user_schedules.sh
+Bash script that:
 
-schedules/ — Output folder containing YAML files like:
+Calculates time distribution across 53 hours.
 
-aman-devspaces.yaml
+Determines how many users should be scheduled per hour.
 
-rahul-devspaces.yaml
+Generates 367 user-specific YAML files using the template.
 
+Output Folder: schedules/
+Contains all generated YAML files like:
+
+python-repl
+Copy
+Edit
+schedules/Aman-devspaces.yaml
+schedules/Abhishek-devspaces.yaml
 ...
-
-🕓 Cron Scheduling Logic
-The 53-hour window is converted to UTC and split evenly across all users. Each generated file uses a unique schedule: cron expression ensuring balanced backup load per hour.
-
-🚀 Usage
+🛠️ Usage
 bash
 Copy
 Edit
 chmod +x generate_user_schedules.sh
 ./generate_user_schedules.sh
-All Velero schedule files will be created inside the schedules/ directory.
+All generated files will be available inside the schedules/ directory.
 
-🛠 Example YAML Output
+⏱️ Schedule Details
+Backup Window: Friday 11 PM CT → Monday 4 AM CT
+(Converted to UTC for Velero cron format: Saturday 4 AM UTC → Monday 9 AM UTC)
+
+Cron Format Used: 0 <hour> * * <day_of_week>
+
+📌 Example Generated YAML
 yaml
 Copy
 Edit
@@ -48,4 +58,14 @@ metadata:
   namespace: openshift-adp
 spec:
   schedule: "0 5 * * 6"
-  ...
+  skipImmediately: false
+  template:
+    csiSnapshotTimeout: 72h
+    defaultVolumesToRestic: true
+    excludedNamespaces: []
+    includedNamespaces:
+      - aman-devspaces
+    storageLocation: ocdev-oadp-data-protection-application-1
+    ttl: 720h
+🤝 Contributions
+Feel free to fork and modify this for larger or different batch scheduling needs. Issues and pull requests are welcome!
